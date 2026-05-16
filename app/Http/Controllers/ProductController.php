@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentSetting;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,10 +11,17 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::latest()->get();
-        return view('admin', compact('products'));
+        $query = Product::latest();
+
+        if ($request->filled('search')) {
+            $query->where('nama_kopi', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->get();
+        $paymentSettings = PaymentSetting::firstOrNew();
+        return view('admin', compact('products', 'paymentSettings'));
     }
 
     public function store(Request $request): RedirectResponse

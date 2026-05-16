@@ -28,6 +28,24 @@
 - **Factories/Seeders:** `database/factories/UserFactory.php`, `database/factories/ProductFactory.php`, `database/seeders/DatabaseSeeder.php`
 - Note: Run `npm run build` before tests or deploy so Vite manifest exists (needed by `@vite()` in Blade views)
 
+## Security (already applied — do not regress)
+
+### XSS prevention
+- Never pass user content inline in `onclick="..."` attributes. Always use `data-*` attributes + `this.dataset`. See `pos.blade.php` and `admin.blade.php` for the safe pattern.
+- Blade `{{ }}` auto-escapes for HTML, but HTML entities are decoded inside `onclick` handlers, making inline interpolation unsafe.
+
+### Price manipulation prevention
+- `CashierController@nota` ignores client-sent `harga` and looks up the real price from the database by product ID. Any price sent from the client is rejected.
+
+### CSRF
+- Every state-changing form (POST/PUT/DELETE) includes `@csrf`. Laravel's `VerifyCsrfToken` middleware covers all routes by default.
+
+### File upload
+- Product photos are validated with `image|mimes:jpeg,png,jpg|max:2048`. Stored in `storage/app/public/products/` (outside PHP execution path). Requires `php artisan storage:link` on fresh setup.
+
+### Authentication
+- Admin routes (`/admin`) are protected by `Route::middleware('auth')`. POS (`/`) and nota (`/nota`) are intentionally public.
+
 ## Code conventions
 - PSR-4: `App\` → `app/`, `Database\Factories\` → `database/factories/`, `Database\Seeders\` → `database/seeders/`, `Tests\` → `tests/`
 - EditorConfig: 4-space indent (2 for yaml), LF line endings, UTF-8

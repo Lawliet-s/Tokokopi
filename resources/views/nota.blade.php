@@ -139,6 +139,21 @@
             <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
         </div>
 
+        <div class="divider"></div>
+
+        <div style="text-align: center; font-size: 12px; color: #92400E; margin-bottom: 4px;">
+            @if ($paymentMethod === 'tunai')
+                Metode Pembayaran: Tunai
+            @elseif ($paymentMethod === 'transfer')
+                Metode Pembayaran: Transfer Bank
+                @if ($paymentSettings->bank_name || $paymentSettings->account_number)
+                    <br>({{ $paymentSettings->bank_name }} - {{ $paymentSettings->account_number }})
+                @endif
+            @elseif ($paymentMethod === 'qris')
+                Metode Pembayaran: QRIS
+            @endif
+        </div>
+
         <div class="footer">
             <span>☕</span><br>
             Terima kasih telah berkunjung!

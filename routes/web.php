@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PaymentSettingController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
     Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::post('/admin/payment-settings', [PaymentSettingController::class, 'update'])->name('payment-settings.update');
 });
 
 Route::get('/', [\App\Http\Controllers\CashierController::class, 'index'])->name('pos');
